@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Commands.h">
+      <UniqueIdentifier>{6d8d3770-8b34-4e7c-8bba-b9f363851074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Commands.cpp">
+      <UniqueIdentifier>{c7de79fc-ca1f-4d3a-8303-9a04622896d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\InputProcessing.cpp">
+      <UniqueIdentifier>{cff5e452-257b-40f8-b600-10ade6e02981}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\InputProcessing.h">
+      <UniqueIdentifier>{1531edac-6537-40ec-bd71-fd5b05fb1a6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Abstract commands">
+      <UniqueIdentifier>{741143e6-0983-49d7-bb4c-6d3be3640d1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Abstract commands">
+      <UniqueIdentifier>{dff557e5-44a2-41e0-aae4-a423bf1d0e8e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Parser.h">
+      <Filter>Header Files\InputProcessing.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Reader.h">
+      <Filter>Header Files\InputProcessing.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulation.h">
+      <Filter>Header Files\InputProcessing.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Echo.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Date.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Touch.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="WcChar.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="WcWords.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Command.h">
+      <Filter>Header Files\Abstract commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandWithArgument.h">
+      <Filter>Header Files\Abstract commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Wc.h">
+      <Filter>Header Files\Abstract commands</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandFactory.h">
+      <Filter>Header Files\InputProcessing.h</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandOption.h">
+      <Filter>Header Files\Abstract commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Prompt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Source Files\InputProcessing.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Reader.cpp">
+      <Filter>Source Files\InputProcessing.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation.cpp">
+      <Filter>Source Files\InputProcessing.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Echo.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="WcChar.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Date.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="WcWords.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Touch.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandWithArgument.cpp">
+      <Filter>Source Files\Abstract commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Command.cpp">
+      <Filter>Source Files\Abstract commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Wc.cpp">
+      <Filter>Source Files\Abstract commands</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandFactory.cpp">
+      <Filter>Source Files\InputProcessing.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandOption.cpp">
+      <Filter>Source Files\Abstract commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Prompt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="input.txt" />
+  </ItemGroup>
+</Project>
