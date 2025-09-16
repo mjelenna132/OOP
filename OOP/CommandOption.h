@@ -7,5 +7,4 @@ protected:
 public:
     CommandOption(const string& name, const string& opt, const string& argument );
     string getOption() const;
-
 };

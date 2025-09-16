@@ -21,12 +21,16 @@ FileReader::~FileReader() {
 
 string FileReader::getNextLine() {
 	string line;
-	getline(*myInput, line);
+	if (!getline(*myInput, line)) {
+		eofDetected = true;  // isto kao kod ConsoleReader
+		return "";
+	}
 	return line;
 }
+//iste su ti getnextline
 
 bool FileReader::endOfRead() {
-	return myInput->eof();
+	return eofDetected;
 }
 
 ConsoleReader::ConsoleReader() {}
@@ -35,10 +39,21 @@ ConsoleReader::~ConsoleReader() {}
 
 string ConsoleReader::getNextLine() {
 	string line;
-	getline(cin, line);  // Čitanje linije sa standardnog ulaza
+	if (!getline(cin, line)) {
+		eofDetected = true;  // Ovde postavljamo da EOF jeste detektovan
+		return "";
+	}  // Čitanje linije sa standardnog ulaza
 	return line;
 }
 
 bool ConsoleReader::endOfRead() {
-	return cin.eof();  // Proverava da li je standardni ulaz završen
+	bool eof = eofDetected || cin.eof();
+	cin.clear();
+	return eof;
+}
+
+void ConsoleReader::reset()
+{
+	eofDetected = false;
+	cin.clear();
 }

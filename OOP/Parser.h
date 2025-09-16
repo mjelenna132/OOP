@@ -9,8 +9,9 @@ public:
 	~Parser();
 
 	Command* getNextCommand();
-	std::string getLeadingCharacter();
-	void setLeadingCharacter(const std::string& character);
+
+	static string getLeadingCharacter();
+	static void setLeadingCharacter(const string& character);
 
 protected:
 
@@ -19,9 +20,10 @@ protected:
 	Reader* myReader;
 
 private:
-	string leadingCharacter;
-	static void truncateLine(std::string& line);
-	static void removeLeadingCharacter(std::string& line, char leadingChar);
+	static string leadingCharacter;
+	static void truncateLine(string& line);
+	static void removeLeadingCharacter(string& line, const string& leadingChar);
+	 
 
 };
 

@@ -8,5 +8,5 @@ void Date::execute() {
     time_t nowTime = chrono::system_clock::to_time_t(now);
 
     struct tm* localTime = localtime(&nowTime);  
-    cout << put_time(localTime, "%Y-%m-%d ")<< endl;
+    *output << put_time(localTime, "%Y-%m-%d ")<< endl;
 }

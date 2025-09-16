@@ -1,11 +1,18 @@
 #include "Wc.h"
 #include <iostream>
-
-Wc:: Wc(const std::string& name, const std::string& option, const std::string& argument)
+#include "MyExceptions.h"
+Wc:: Wc(const string& name, const string& option, const string& argument)
     : CommandOption(name,option,argument), counter(0) {
+    if (option != "c" && option != "w") {
+        throw ArgumentException("Neispravna opcija za wc komandu.");
+    }
     //da li  ovde moze da se zove count??
 }
 
 void Wc::execute() {
-    cout << this->counter << endl;
+    if (getCommandName() == "head") {
+        return;
+    }
+    count();
+    *output << this->counter << endl;
 }

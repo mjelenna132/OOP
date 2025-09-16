@@ -1,9 +1,9 @@
 #include "WcWords.h"
 
 
-WcWords::WcWords(const std::string& name, const std::string& option, const std::string& argument)
+WcWords::WcWords(const string& name, const string& option, const string& argument)
 	: Wc(name, option, argument) {
-	count();
+	
 }
 void WcWords::count() {
     bool inWord = false; 

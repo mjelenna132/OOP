@@ -5,7 +5,7 @@
 #include <ctime>
 class Date: public Command{
 public:
-	Date(const std::string& name);
+	Date(const string& name);
 	void execute() override;
 };
 

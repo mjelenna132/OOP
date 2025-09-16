@@ -1,6 +1,7 @@
 #include "Touch.h"
 #include <iostream>
 #include <fstream>
+#include "MyExceptions.h"
 
 using namespace std;
 
@@ -9,23 +10,22 @@ Touch::Touch(const std::string& name, const std::string& arg)
 
 void Touch::execute() {
     if (this->noArgument()) {
-        cout << "Error: No file name provided." << endl;
+        throw ArgumentException("Nije dato ime fajla.");
         return;
     }
 
   
     ifstream existingFile(argument);
     if (existingFile.is_open()) {
-        cout << "Error: File '" << argument << "' already exists." << endl;
-        return;
+        existingFile.close();
+        throw FileException("Fajl '" + argument + "' ve? postoji.");
     }
 
   
     ofstream newFile(argument);
     if (!newFile) {
-        cout << "Error: Could not create file '" << argument << "'." << endl;
-        return;
+        throw FileException("Nije mogu?e kreirati fajl '" + argument + "'.");
     }
 
-    cout << "File '" << argument << "' created successfully." << endl;
+   *output << "File '" << argument << "' created successfully." << endl;
 }

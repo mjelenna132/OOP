@@ -1,19 +1,24 @@
 #pragma once
-#include"Command.h"
-class CommandWithArgument : public Command{
+#include "Command.h"
+
+
+class CommandWithArgument : public Command {
 protected:
     string argument;
     Reader* myReader;
-    void argumentFromFile();
+
     void argumentKeyboardInput();
     bool isFile();
+    bool isFileCommand();
     bool noArgument();
     void newArgument();
+
+    static string removeQuotes(const string& input);
+
 public:
     CommandWithArgument(const string& name, const string& arg);
-    ~CommandWithArgument();
+    virtual ~CommandWithArgument();
+
     string getArgument() const;
-
-   
+    void setArgument(const string& newArgument); // <-- NOVA METODA
 };
-

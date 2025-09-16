@@ -2,7 +2,8 @@
 
 WcChar::WcChar(const std::string& name, const std::string& option, const std::string& argument)
 	: Wc(name, option, argument) {
-	count();
+	
+	// da li ovo moze da se zove u Wc konstruktoru
 }
 
 

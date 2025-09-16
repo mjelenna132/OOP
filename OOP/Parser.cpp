@@ -4,7 +4,12 @@
 
 using namespace std;
 
-Parser::Parser(Reader* reader) :myReader(reader), leadingCharacter("$") {
+
+// Define the static variable
+string Parser::leadingCharacter = "$";
+
+Parser::Parser(Reader* reader) : myReader(reader) {
+	
 }
 
 Parser::~Parser() {
@@ -13,48 +18,50 @@ Parser::~Parser() {
 
 Command* Parser::getNextCommand() {
 	string line = myReader->getNextLine();
-	if (myReader->endOfRead()) return nullptr;
+	if (myReader->endOfRead()) return nullptr; //prob
     return parseCommand(line);
 }
 
-std::string Parser::getLeadingCharacter() {
+string Parser::getLeadingCharacter() {
     if (leadingCharacter.empty()) {
-        throw std::runtime_error("Leading character is not set.");
+        throw runtime_error("Leading character is not set.");
     }
     return leadingCharacter;
 }
 
 // Implementation of setLeadingCharacter
-void Parser::setLeadingCharacter(const std::string& character) {
-    if (character.size() != 1 || !std::isalnum(character[0])) {
-        throw std::invalid_argument("Leading character must be a single alphanumeric character.");
+void Parser::setLeadingCharacter(const string& character) {
+    if (character.empty()) {
+        throw invalid_argument("Leading character string cannot be empty.");
     }
+    
+
     leadingCharacter = character;
 }
 
 
-void Parser::truncateLine(std::string& line) {
+void Parser::truncateLine(string& line) {
     if (line.size() > 512) {
         line = line.substr(0, 512); // Skrati liniju na 512 karaktera
     }
 }
 
-void Parser::removeLeadingCharacter(std::string& line, char leadingChar) {
-    if (!line.empty() && line.front() == leadingChar) {
-        line = line.substr(1); // Uklanja prvi karakter ako se poklapa
+void Parser::removeLeadingCharacter(string& line, const string& leadingChar) {
+    if (line.substr(0, leadingChar.size()) == leadingChar) {
+        line = line.substr(leadingChar.size());
     }
 }
 
-Command* Parser::parseCommand(std::string line) {
+Command* Parser::parseCommand(string line) {
     truncateLine(line); // Skrati liniju ako je duža od 512 karaktera
-    removeLeadingCharacter(line, leadingCharacter[0]); // Uklanja `$` sa početka linije
+    removeLeadingCharacter(line, leadingCharacter); // Uklanja `$` sa početka linije
 
-    std::istringstream stream(line);
-    std::string command;
+    istringstream stream(line);
+    string command;
 
     // Prva reč mora biti komanda
     if (!(stream >> command)) {
-        std::cerr << "Invalid command format: Missing command" << std::endl;
+        cerr << "Invalid command format: Missing command" << endl;
         return nullptr;
     }
 

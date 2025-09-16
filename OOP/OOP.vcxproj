@@ -127,15 +127,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Batch.h" />
     <ClInclude Include="Command.h" />
     <ClInclude Include="CommandOption.h" />
     <ClInclude Include="CommandWithArgument.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="Echo.h" />
     <ClInclude Include="CommandFactory.h" />
+    <ClInclude Include="Head.h" />
+    <ClInclude Include="MyExceptions.h" />
+    <ClInclude Include="Pipeline.h" />
     <ClInclude Include="Prompt.h" />
+    <ClInclude Include="Rm.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Touch.h" />
+    <ClInclude Include="Tr.h" />
+    <ClInclude Include="Truncate.h" />
     <ClInclude Include="Wc.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="Reader.h" />
@@ -144,25 +151,32 @@
     <ClInclude Include="WcWords.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Batch.cpp" />
     <ClCompile Include="Command.cpp" />
+    <ClCompile Include="CommandFactory.cpp" />
     <ClCompile Include="CommandOption.cpp" />
     <ClCompile Include="CommandWithArgument.cpp" />
     <ClCompile Include="Date.cpp" />
     <ClCompile Include="Echo.cpp" />
-    <ClCompile Include="CommandFactory.cpp" />
+    <ClCompile Include="Head.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Prompt.cpp" />
+    <ClCompile Include="Reader.cpp" />
+    <ClCompile Include="Rm.cpp" />
+    <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Touch.cpp" />
+    <ClCompile Include="Tr.cpp" />
+    <ClCompile Include="Truncate.cpp" />
     <ClCompile Include="Wc.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="Reader.cpp" />
-    <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="WcChar.cpp" />
     <ClCompile Include="WcWords.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />
+    <Text Include="taci.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

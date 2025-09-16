@@ -19,9 +19,6 @@
     <Filter Include="Source Files\Commands.cpp">
       <UniqueIdentifier>{c7de79fc-ca1f-4d3a-8303-9a04622896d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\InputProcessing.cpp">
-      <UniqueIdentifier>{cff5e452-257b-40f8-b600-10ade6e02981}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\InputProcessing.h">
       <UniqueIdentifier>{1531edac-6537-40ec-bd71-fd5b05fb1a6b}</UniqueIdentifier>
     </Filter>
@@ -76,21 +73,33 @@
       <Filter>Header Files\Abstract commands</Filter>
     </ClInclude>
     <ClInclude Include="Prompt.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Truncate.h">
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Rm.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Head.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Batch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Pipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MyExceptions.h">
+      <Filter>Header Files\InputProcessing.h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Parser.cpp">
-      <Filter>Source Files\InputProcessing.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Reader.cpp">
-      <Filter>Source Files\InputProcessing.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Simulation.cpp">
-      <Filter>Source Files\InputProcessing.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Echo.cpp">
       <Filter>Source Files\Commands.cpp</Filter>
@@ -110,26 +119,54 @@
     <ClCompile Include="Touch.cpp">
       <Filter>Source Files\Commands.cpp</Filter>
     </ClCompile>
-    <ClCompile Include="CommandWithArgument.cpp">
-      <Filter>Source Files\Abstract commands</Filter>
-    </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>Source Files\Abstract commands</Filter>
     </ClCompile>
     <ClCompile Include="Wc.cpp">
       <Filter>Source Files\Abstract commands</Filter>
     </ClCompile>
-    <ClCompile Include="CommandFactory.cpp">
-      <Filter>Source Files\InputProcessing.cpp</Filter>
-    </ClCompile>
     <ClCompile Include="CommandOption.cpp">
       <Filter>Source Files\Abstract commands</Filter>
     </ClCompile>
+    <ClCompile Include="Truncate.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
     <ClCompile Include="Prompt.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Rm.cpp">
+      <Filter>Source Files\Commands.cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="Head.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Tr.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandWithArgument.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="input.txt" />
+    <Text Include="taci.txt" />
   </ItemGroup>
 </Project>

@@ -12,6 +12,8 @@ public:
 	virtual string getNextLine() = 0;
 
 	virtual bool endOfRead() = 0;
+protected:
+	bool eofDetected = false;
 };
 
 class FileReader : public Reader {
@@ -25,6 +27,7 @@ public:
 
 private:
 	ifstream* myInput;
+	
 };
 
 class ConsoleReader : public Reader {
@@ -35,6 +38,9 @@ public:
 	virtual string getNextLine();
 
 	virtual bool endOfRead();
+	void reset();
+//private:
+	 // Da li je detektovan EOF, treba u konstrukoru
 
  
 };
