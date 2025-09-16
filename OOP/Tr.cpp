@@ -1,6 +1,7 @@
 ﻿#include "Tr.h"
 #include <iostream>
 #include "MyExceptions.h"
+#include "CommandFactory.h"
 
 Tr::Tr(const string& name,
     const string& arg,
@@ -15,7 +16,10 @@ Tr::Tr(const string& name,
     //keyboardInput(arg, what, with); // Ili ucita argument ili prazan string
     //u arg nam ostaje inicijalna vrednost a u argument se ucita sa standardnog ulaza
     // if is input stream skip ovo 
-   initializeArguments(arg, what, with);
+    if(!CommandFactory::pipelineActive){
+        initializeArguments(arg, what, with);
+    }
+   
 }
 
 void Tr::initializeArguments(const string& arg,
@@ -24,7 +28,7 @@ void Tr::initializeArguments(const string& arg,
 {
     
        //Argument je svakako ucitan
-    if (!arg.empty() && !what.empty() && with.empty()) {
+    if (!arg.empty() && !what.empty() && with.empty() ) {
         // what i with su uneti, tekst dolazi sa tastature
         // argument i what su uneti, with izostavljeno
         this->argumentKeyboardInput();

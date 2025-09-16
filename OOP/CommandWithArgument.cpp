@@ -5,7 +5,8 @@
 
 // Finalni konstruktor koji ispravno radi i čuva myReader
 CommandWithArgument::CommandWithArgument(const string& name, const string& arg)
-    : Command(name), argument(removeQuotes(arg)), myReader(nullptr) {
+    : Command(name), argument(arg), myReader(nullptr) {
+    this->setArgument(removeQuotes(arg));
 
     // Ako je komanda deo pipeline-a, ne procesuiraj ulaz.
     // myReader ostaje nullptr, a argument će biti postavljen spolja.
@@ -21,7 +22,6 @@ CommandWithArgument::CommandWithArgument(const string& name, const string& arg)
         }
         // DRUGI PRIORITET: Argument je ime fajla.
         else if (this->isFile() && !this->isFileCommand()) {
-            cout << "uslo u file" << endl;
             myReader = new FileReader(this->argument);
             this->newArgument();
         }
@@ -74,13 +74,11 @@ string CommandWithArgument::removeQuotes(const string& input) {
     if (input.front() == '"' && input.back() == '"') {
         return input.substr(1, input.size() - 2);
     }
-    else {
-        return input;
-    }
+   
 
     // 3) nije quoted → dozvoli SAMO ako izgleda kao .txt i komanda NIJE file-komanda
-    /*
-    if (isFile() && !isFileCommand())
+    
+    else if (this->isFile() && !this->isFileCommand())
     {
         return input; // ostavi kako jeste; biće tretirano kao fajl
     }
@@ -88,7 +86,7 @@ string CommandWithArgument::removeQuotes(const string& input) {
     // 4) u svim ostalim slučajevima → greška
     throw SyntaxException("Argument mora biti pod navodnicima: " + input);
     //resi ovo ujutru 
-    */
+    
 }
 
 string CommandWithArgument::getArgument() const {

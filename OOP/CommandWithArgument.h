@@ -13,7 +13,7 @@ protected:
     bool noArgument();
     void newArgument();
 
-    static string removeQuotes(const string& input);
+    string removeQuotes(const string& input);
 
 public:
     CommandWithArgument(const string& name, const string& arg);
