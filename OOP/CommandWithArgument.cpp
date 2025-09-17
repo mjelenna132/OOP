@@ -2,44 +2,43 @@
 #include "CommandFactory.h"
 #include "MyExceptions.h"
 
-
-// Finalni konstruktor koji ispravno radi i čuva myReader
 CommandWithArgument::CommandWithArgument(const string& name, const string& arg)
     : Command(name), argument(arg), myReader(nullptr) {
+    // Clean up the raw argument (remove quotes if needed)
+    this->setArgument(removeQuotes(arg));
+    if (CommandFactory::isInputStream && !this->noArgument() && this->getCommandName() != "tr") {
+        throw ArgumentException("Input redirection cannot be used together with an argument.");
+    }
     this->setArgument(removeQuotes(arg));
 
-    // Ako je komanda deo pipeline-a, ne procesuiraj ulaz.
-    // myReader ostaje nullptr, a argument će biti postavljen spolja.
+    // If command is not in a pipeline, decide how to read input
     if (!CommandFactory::pipelineActive) {
 
-        // PRVI PRIORITET: Eksplicitna redirekcija ulaza ('<').
+        // Case 1: input is redirected with '<'
         if (CommandFactory::isInputStream) {
-           
             string filename = CommandFactory::inputFile;
-  
             myReader = new FileReader(filename);
             this->newArgument();
         }
-        // DRUGI PRIORITET: Argument je ime fajla.
-        else if (this->isFile() && !this->isFileCommand()) {
+        // Case 2: argument is a file name (.txt), not for file commands, no quotes
+        else if (this->isFile() && !this->isFileCommand() && !isQuoted(argument)) {
             myReader = new FileReader(this->argument);
             this->newArgument();
         }
-        // TREĆI PRIORITET: Nema argumenta, čitaj sa tastature.
-        else if (this->noArgument()) {
+        // Case 3: no argument → read from keyboard
+        else if (this->noArgument() && this->getCommandName()!= "tr") {
             this->argumentKeyboardInput();
         }
     }
 }
 
 CommandWithArgument::~CommandWithArgument() {
-    delete myReader;
+    delete myReader; // free memory if reader was used
 }
 
 bool CommandWithArgument::isFile() {
-    if (argument.length() < 4) {
-        return false;
-    }
+    // Check if argument ends with ".txt"
+    if (argument.length() < 4) return false;
     return argument.substr(argument.length() - 4) == ".txt";
 }
 
@@ -48,6 +47,7 @@ bool CommandWithArgument::noArgument() {
 }
 
 void CommandWithArgument::newArgument() {
+    // Read all lines from reader into 'argument'
     if (!myReader) return;
 
     string content;
@@ -61,32 +61,30 @@ void CommandWithArgument::newArgument() {
             content += '\n';
         }
     }
+     if (!content.empty() && content.back() == '\n') {
+        content.pop_back();
+    }
     argument = content;
 }
 
 string CommandWithArgument::removeQuotes(const string& input) {
-    // 1) prazan string je dozvoljen (npr. with može izostati)
+    // Allow empty input
     if (input.empty()) {
         return input;
     }
 
-    // 2) ako je quoted → skini navodnike
-    if (input.front() == '"' && input.back() == '"') {
+    // If quoted → remove quotes
+    if (isQuoted(input)) {
         return input.substr(1, input.size() - 2);
     }
-   
 
-    // 3) nije quoted → dozvoli SAMO ako izgleda kao .txt i komanda NIJE file-komanda
-    
-    else if (this->isFile() && !this->isFileCommand())
-    {
-        return input; // ostavi kako jeste; biće tretirano kao fajl
+    // If not quoted → allow only if it looks like a .txt file
+    if (this->isFile()) {
+        return input;
     }
 
-    // 4) u svim ostalim slučajevima → greška
-    throw SyntaxException("Argument mora biti pod navodnicima: " + input);
-    //resi ovo ujutru 
-    
+    // Otherwise throw error
+    throw SyntaxException("Argument must be in quotes: " + input);
 }
 
 string CommandWithArgument::getArgument() const {
@@ -94,6 +92,7 @@ string CommandWithArgument::getArgument() const {
 }
 
 void CommandWithArgument::argumentKeyboardInput() {
+    // Read text from keyboard
     if (myReader != nullptr) {
         delete myReader;
     }
@@ -102,11 +101,16 @@ void CommandWithArgument::argumentKeyboardInput() {
 }
 
 bool CommandWithArgument::isFileCommand() {
+    // Commands that work directly on file names
     string cmdName = getCommandName();
     return (cmdName == "touch" || cmdName == "rm" || cmdName == "truncate");
 }
 
-// IMPLEMENTACIJA NOVE METODE
 void CommandWithArgument::setArgument(const string& newArgument) {
-    this->argument = newArgument;
+    argument = newArgument;
+}
+
+bool CommandWithArgument::isQuoted(const std::string& input) const
+{
+    return !input.empty() && input.front() == '"' && input.back() == '"';
 }

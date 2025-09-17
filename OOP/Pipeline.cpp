@@ -4,10 +4,10 @@
 #include <iostream>
 
 Pipeline::Pipeline(const vector<Command*>& commands)
-    : Command("Pipeline"), pipelineCommands(commands) {
-}
+    : Command("Pipeline"), pipelineCommands(commands) {}
 
 Pipeline::~Pipeline() {
+    // Free all commands in the pipeline
     for (Command* cmd : pipelineCommands) {
         delete cmd;
     }
@@ -15,35 +15,31 @@ Pipeline::~Pipeline() {
 
 void Pipeline::execute() {
     string pipeContent;
-    streambuf* originalCout = cout.rdbuf();
+    streambuf* originalCout = cout.rdbuf(); // Save the original output buffer
 
     for (size_t i = 0; i < pipelineCommands.size(); ++i) {
         Command* currentCmd = pipelineCommands[i];
 
+        // If not the first command, pass previous output as input
         if (i > 0) {
             CommandWithArgument* cmdWithArg = dynamic_cast<CommandWithArgument*>(currentCmd);
 
             if (cmdWithArg) {
-                // Kastovanje je uspelo, postavi argument
+                // Set argument for the command from the previous output
                 cmdWithArg->setArgument(pipeContent);
             }
             else {
-                // --- NOVI DEO - OBRADA GREŠKE ---
-                // Kastovanje NIJE USPELO. To zna?i da je komanda u sredini ili na kraju
-                // pipeline-a, a ne može da primi argument. To je greška.
+                // Command cannot take input - error
+                cerr << "Error: Command '" << currentCmd->getCommandName()
+                    << "' cannot be used in a pipeline." << endl;
 
-                // Ispisujemo poruku o grešci na cerr (standardni izlaz za greške)
-                cerr << "Greska: Komanda '" << currentCmd->getCommandName()
-                    << "' ne moze da se nadje u cevovodu." << endl;
-
-                // Obavezno vratimo cout na originalno stanje pre nego što prekinemo izvršavanje
+                // Restore original output and stop
                 cout.rdbuf(originalCout);
-
-                // Prekidamo dalje izvršavanje pipeline-a
                 return;
             }
         }
 
+        // Redirect output: buffer if not the last command, otherwise back to console
         stringstream buffer;
         if (i < pipelineCommands.size() - 1) {
             cout.rdbuf(buffer.rdbuf());
@@ -52,16 +48,18 @@ void Pipeline::execute() {
             cout.rdbuf(originalCout);
         }
 
+        // Run the command
         currentCmd->execute();
 
+        // Save output for the next command
         if (i < pipelineCommands.size() - 1) {
             pipeContent = buffer.str();
             if (!pipeContent.empty() && pipeContent.back() == '\n') {
-                pipeContent.pop_back();
+                pipeContent.pop_back(); // remove trailing newline
             }
         }
     }
 
-    // Vrati cout na originalno stanje za svaki slu?aj, ako petlja nikad nije ušla u `else`
+    // Restore original output just in case
     cout.rdbuf(originalCout);
 }

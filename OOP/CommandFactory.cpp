@@ -10,9 +10,7 @@
 
 using namespace std;
 
-// ======================================================================
-// Statics
-// ======================================================================
+// Static state (global redirection/pipeline flags and files)
 bool   CommandFactory::isInputStream = false;
 bool   CommandFactory::isOutputStream = false;
 bool   CommandFactory::pipelineActive = false;
@@ -22,16 +20,16 @@ string CommandFactory::outputFile = "";
 CommandFactory::RedirKind CommandFactory::inputKind = CommandFactory::RedirKind::NONE;
 CommandFactory::RedirKind CommandFactory::outputKind = CommandFactory::RedirKind::NONE;
 
-// ======================================================================
-// Privatni helper-i
-// ======================================================================
+// Private helpers (anonymous namespace)
 namespace {
 
+    // One redirection token like '<file', '>', '>>out.txt'
     struct RedirTok {
         CommandFactory::RedirKind kind = CommandFactory::RedirKind::NONE;
-        string fname; // ako nema imena u istom tokenu, ostaje prazno
+        string fname; // filename if present (may be empty)
     };
 
+    // Trim spaces
     inline string trim(const string& s) {
         size_t a = s.find_first_not_of(" \t\r\n");
         if (a == string::npos) return "";
@@ -39,6 +37,7 @@ namespace {
         return s.substr(a, b - a + 1);
     }
 
+    // Remove surrounding quotes if any
     inline string unquoteIfQuoted(const string& s) {
         if (s.size() >= 2 && s.front() == '"' && s.back() == '"') {
             return s.substr(1, s.size() - 2);
@@ -46,11 +45,12 @@ namespace {
         return s;
     }
 
+    // Normalize a filename: trim + unquote
     inline void normalizeFilename(string& s) {
         s = trim(unquoteIfQuoted(trim(s)));
     }
 
-    // Prepoznaj <, >, >> sa i bez razmaka
+    // Parse redirection operators: <, >, >> (with or without attached filename)
     inline bool parseRedirToken(const string& token, RedirTok& out) {
         out = {};
         if (token.empty()) return false;
@@ -87,23 +87,24 @@ namespace {
         return true;
     }
 
-    // Primeni redirekciju
-    inline void applyRedir(CommandFactory::RedirKind kind, const string& fname, bool allowIn, bool allowOut) {
+    // Apply a redirection to global flags (with validation)
+    inline void applyRedir(CommandFactory::RedirKind kind, const string& fname,
+        bool allowIn, bool allowOut) {
         using RK = CommandFactory::RedirKind;
 
         if (kind == RK::IN) {
-            if (!allowIn)                      throw ArgumentException("Redirekcija ulaza '<' nije dozvoljena.");
-            if (CommandFactory::isInputStream) throw ArgumentException("Dvostruka redirekcija ulaza nije dozvoljena.");
-            if (fname.empty())                 throw SyntaxException("Fajl za ulaznu redirekciju nije naveden.");
+            if (!allowIn)                      throw ArgumentException("Input redirection '<' not allowed here.");
+            if (CommandFactory::isInputStream) throw ArgumentException("Duplicate input redirection.");
+            if (fname.empty())                 throw SyntaxException("Missing file for input redirection.");
 
             CommandFactory::isInputStream = true;
             CommandFactory::inputFile = fname;
             CommandFactory::inputKind = RK::IN;
         }
         else if (kind == RK::OUT_TRUNC || kind == RK::OUT_APPEND) {
-            if (!allowOut)                      throw ArgumentException("Redirekcija izlaza '>' nije dozvoljena.");
-            if (CommandFactory::isOutputStream) throw ArgumentException("Dvostruka redirekcija izlaza nije dozvoljena.");
-            if (fname.empty())                  throw SyntaxException("Fajl za izlaznu redirekciju nije naveden.");
+            if (!allowOut)                      throw ArgumentException("Output redirection '>' not allowed here.");
+            if (CommandFactory::isOutputStream) throw ArgumentException("Duplicate output redirection.");
+            if (fname.empty())                  throw SyntaxException("Missing file for output redirection.");
 
             CommandFactory::isOutputStream = true;
             CommandFactory::outputFile = fname;
@@ -111,7 +112,7 @@ namespace {
         }
     }
 
-    // Split po |, ignoriši unutar navodnika
+    // Split a pipeline by '|' while respecting quoted strings
     inline vector<string> splitPipeline(const string& line) {
         vector<string> parts;
         string curr;
@@ -134,25 +135,24 @@ namespace {
         return parts;
     }
 
-} // namespace
-
-// ======================================================================
-// CommandFactory javne metode
-// ======================================================================
-
+}
 Command* CommandFactory::createCommand(const string& firstWord, istringstream& restOfline) {
+    // Rebuild full input line (command + remaining text)
     string rest;
     getline(restOfline, rest);
     string fullLine = firstWord + rest;
 
+    // Reject forbidden characters when not inside quotes
     bool inQuotes = false;
     for (size_t i = 0; i < fullLine.size(); ++i) {
         if (fullLine[i] == '"') inQuotes = !inQuotes;
-        if (!inQuotes && (fullLine[i] == '&' || fullLine[i] == '*' || fullLine[i] == '?' || fullLine[i] == '+')) {
-            throw SyntaxException("Nedozvoljen karakter '" + string(1, fullLine[i]) + "'.");
+        if (!inQuotes && (fullLine[i] == '&' || fullLine[i] == '*' ||
+            fullLine[i] == '?' || fullLine[i] == '+')) {
+            throw SyntaxException("Forbidden character '" + string(1, fullLine[i]) + "'.");
         }
     }
 
+    // Pipeline or single command?
     vector<string> parts = splitPipeline(fullLine);
     if (parts.size() > 1) {
         return createPipelineCommand(parts);
@@ -178,7 +178,7 @@ Command* CommandFactory::createPipelineCommand(const vector<string>& segments) {
 
         if (cmd.empty()) {
             for (auto* p : cmds) delete p;
-            throw SyntaxException("Prazna komanda u cevovodu na poziciji " + to_string(i));
+            throw SyntaxException("Empty command in pipeline at position " + to_string(i));
         }
 
         Command* c = createSingleCommand(cmd, s, allowIn, allowOut);
@@ -190,6 +190,7 @@ Command* CommandFactory::createPipelineCommand(const vector<string>& segments) {
 }
 
 void CommandFactory::resetRedirections() {
+    // Clear global redirection state
     isInputStream = false;
     isOutputStream = false;
     inputFile.clear();
@@ -198,18 +199,21 @@ void CommandFactory::resetRedirections() {
     outputKind = RedirKind::NONE;
 }
 
-void CommandFactory::processRedirections(istringstream& stream, bool allowInputRedir, bool allowOutputRedir) {
+void CommandFactory::processRedirections(istringstream& stream,
+    bool allowInputRedir, bool allowOutputRedir) {
+    // Consume only redirection tokens from the stream
     string token;
 
     while (stream >> token) {
         RedirTok rt;
         if (!parseRedirToken(token, rt)) {
-            throw ArgumentException("Neočekivani argument '" + token + "'. Očekivana je redirekcija.");
+            throw ArgumentException("Unexpected argument '" + token + "'. Redirection expected.");
         }
 
         if (rt.fname.empty()) {
+            // Operator separated from filename: read filename next
             if (!(stream >> rt.fname)) {
-                throw SyntaxException("Fajl za redirekciju nije naveden.");
+                throw SyntaxException("Missing filename for redirection.");
             }
             normalizeFilename(rt.fname);
         }
@@ -220,10 +224,12 @@ void CommandFactory::processRedirections(istringstream& stream, bool allowInputR
 
 Command* CommandFactory::createSingleCommand(const string& command, istringstream& restOfLine,
     bool allowInputRedir, bool allowOutputRedir) {
+    // Prepare redirection state for this command
     resetRedirections();
 
     string option, argument;
 
+    // Simple commands with a single argument (possibly quoted)
     if (command == "echo" || command == "touch" || command == "truncate" ||
         command == "rm" || command == "batch" || command == "prompt") {
 
@@ -237,9 +243,10 @@ Command* CommandFactory::createSingleCommand(const string& command, istringstrea
         if (command == "prompt")   return new Prompt(command, argument);
         if (command == "batch")    return new Batch(command, argument);
     }
+    // Commands with an option + argument
     else if (command == "wc" || command == "head") {
-        if (!(restOfLine >> option)) throw ArgumentException("Nedostaje opcija za komandu '" + command + "'.");
-        if (!option.empty() && option[0] == '-') option.erase(option.begin());
+        if (!(restOfLine >> option)) throw ArgumentException("Missing option for '" + command + "'.");
+        if (!option.empty() && option[0] == '-') option.erase(option.begin()); // drop leading '-'
 
         readArgument(restOfLine, argument);
         processRedirections(restOfLine, allowInputRedir, allowOutputRedir);
@@ -247,49 +254,49 @@ Command* CommandFactory::createSingleCommand(const string& command, istringstrea
         if (command == "wc") {
             if (option == "c") return new WcChar(command, option, argument);
             else if (option == "w") return new WcWords(command, option, argument);
-            else throw ArgumentException("Nepoznata opcija za wc komandu.");
+            else throw ArgumentException("Unknown option for wc.");
         }
         else {
             return new Head(command, option, argument);
         }
     }
+    // 'tr' has up to 3 positional args: [argument] what [with]
     else if (command == "tr") {
         std::vector<std::string> args;
+
+        // Read up to three tokens before redirections
         for (;;) {
-            restOfLine >> ws;                 // preskoči beline
+            restOfLine >> ws;                 // skip spaces
             int ch = restOfLine.peek();
-            if (ch == EOF || ch == '<' || ch == '>') break; // slede redirekcije ili kraj
+            if (ch == EOF || ch == '<' || ch == '>') break; // redirs or end
 
             std::string tok;
-            readArgument(restOfLine, tok);    // čita i quoted tokene, ne dira redirekcije
+            readArgument(restOfLine, tok);    // read token (quoted-safe)
             if (!tok.empty()) args.push_back(tok);
 
-            if (args.size() == 3) break;      // maksimalno: [argument] what [with]
+            if (args.size() == 3) break;
         }
 
-        // 2) Obradi redirekcije (spojene i razdvojene)
+        // Then process any redirections
         processRedirections(restOfLine, allowInputRedir, allowOutputRedir);
 
-        // 3) Mapiranje na: tr [argument] what [with]
+        // Map tokens into: tr [argument] what [with]
         if (args.empty()) {
-            throw ArgumentException("Za 'tr' je obavezan 'what'. Dozvoljeno: tr [argument] what [with].");
+            throw ArgumentException("For 'tr', 'what' is required. Usage: tr [argument] what [with].");
         }
 
         std::string argForTr, what, with;
 
         if (args.size() == 1) {
-            // samo WHAT; argument i with izostavljeni
-            argForTr = "";            // → CommandWithArgument će čitati sa tastature ili iz < input.txt
+            // only WHAT; input will come from keyboard or '<'
+            argForTr = "";
             what = args[0];
             with = "";
-            cout << "uslo u ucitalo samo what" << endl;
         }
         else if (args.size() == 2) {
-            // Dvosmislen slučaj. Pravilo:
-            // - ako postoji ulazna redirekcija (<), tumači kao WHAT, WITH (argument izostavljen)
-            // - inače tumači kao ARGUMENT, WHAT (WITH izostavljen)
+            // Ambiguous: if input is redirected, treat as WHAT, WITH; else ARGUMENT, WHAT
             if (isInputStream) {
-                argForTr = "";        // ulaz dolazi iz <fajla
+                argForTr = "";
                 what = args[0];
                 with = args[1];
             }
@@ -300,7 +307,6 @@ Command* CommandFactory::createSingleCommand(const string& command, istringstrea
             }
         }
         else { // args.size() == 3
-            // sve dato eksplicitno: ARGUMENT, WHAT, WITH
             argForTr = args[0];
             what = args[1];
             with = args[2];
@@ -308,12 +314,13 @@ Command* CommandFactory::createSingleCommand(const string& command, istringstrea
 
         return new Tr(command, argForTr, what, with);
     }
+    // Commands without args (time/date), only redirections allowed
     else if (command == "time" || command == "date") {
-        restOfLine >> ws;                 // preskoči praznine
+        restOfLine >> ws;
         int ch = restOfLine.peek();
 
         if (ch == EOF) {
-            // bez argumenata
+            // no extra args
         }
         else if (ch == '<' || ch == '>') {
             processRedirections(restOfLine, allowInputRedir, allowOutputRedir);
@@ -321,60 +328,58 @@ Command* CommandFactory::createSingleCommand(const string& command, istringstrea
         else {
             string junk;
             restOfLine >> junk;
-            throw ArgumentException("Previše argumenata za komandu '" + command + "'.");
+            throw ArgumentException("Too many arguments for '" + command + "'.");
         }
 
         if (command == "time") return new Time(command);
         else                   return new Date(command);
     }
     else {
-        throw CommandException("Nepoznata komanda.");
+        throw CommandException("Unknown command.");
     }
 
     return nullptr;
 }
 
-// === KLJUČNA IZMJENA: ne “pojedaj” odvojene operatore; pusti processRedirections ===
+// Do not consume separated redirection operators here; let processRedirections handle them
 void CommandFactory::readArgument(istringstream& stream, string& argument) {
     argument.clear();
 
-    // preskoči whitespace
+    // Skip spaces
     stream >> ws;
     int ch1 = stream.peek();
     if (ch1 == EOF) return;
 
+    // If we see a redirection operator, decide if it's separated or attached to a filename
     if (ch1 == '<' || ch1 == '>') {
-        // pogledaj da li je odvojeno ili spojeno
-        // privremeno pročitaj prvi znak
         char c1; stream.get(c1);
         int ch2 = stream.peek();
         bool isAppendOp = (c1 == '>' && ch2 == '>');
         if (isAppendOp) {
-            // pročitaj i drugi '>'
             char c2; stream.get(c2);
             ch2 = stream.peek();
         }
 
-        // ako posle operatora sledi whitespace ili EOF -> ODVOJENO -> vrati operatore i izađi
+        // Separated operator: put back and return (so processRedirections can handle it)
         if (ch2 == EOF || isspace(ch2)) {
-            // vrati šta smo pročitali
-            stream.unget(); // vrati poslednji peek (nije potrošen, pa ako je EOF, ne radi unget)
-            if (isAppendOp) stream.unget(); // vrati drugi '>'
-            stream.unget(); // vrati prvi znak operatora
-            return; // pusti processRedirections da odradi
-        }
-        else {
-            // SPOJENO: vrati operatore pa pročitaj ceo token normalno
+            stream.unget();
             if (isAppendOp) stream.unget();
             stream.unget();
-            // sada normalno čitaj token u 'argument'
+            return;
+        }
+        else {
+            // Attached operator: put back and read as a normal token
+            if (isAppendOp) stream.unget();
+            stream.unget();
         }
     }
 
-    // čitaj “normalan” argument/token (može biti i citiran)
+    // Read a normal token (supports quoted tokens)
     if (!(stream >> argument)) return;
 
-    if (!argument.empty() && argument.front() == '"' && (argument.size() == 1 || argument.back() != '"')) {
+    // If opening quote without closing yet, keep reading until closing quote
+    if (!argument.empty() && argument.front() == '"' &&
+        (argument.size() == 1 || argument.back() != '"')) {
         string tail; char c;
         while (stream.get(c)) {
             tail.push_back(c);
@@ -383,17 +388,19 @@ void CommandFactory::readArgument(istringstream& stream, string& argument) {
         argument += tail;
     }
 
-    // Ako je spojena redirekcija (“<in.txt”, “>>out.txt”) – pojedi je ovde
+    // If token is a compact redirection (e.g., "<in.txt", ">>out.txt"), handle it now
     validateArgument(argument, true, true);
 }
 
-void CommandFactory::validateArgument(std::string& argument, bool allowInputRedir, bool allowOutputRedir) {
+void CommandFactory::validateArgument(std::string& argument,
+    bool allowInputRedir, bool allowOutputRedir) {
     if (argument.empty()) return;
 
     RedirTok rt;
     if (!parseRedirToken(argument, rt)) return;
 
     if (!rt.fname.empty()) {
+        // Apply redirection and consume this token
         applyRedir(rt.kind, rt.fname, allowInputRedir, allowOutputRedir);
         argument.clear();
     }

@@ -1,13 +1,14 @@
 ﻿#pragma once
 #include <iostream>
 #include <string>
-#include "Reader.h" // GRESKA
+#include "Reader.h" 
 using namespace std;
+
 class Command {
 protected:
     string commandName;
-  // Podrazumevani ulaz: tastatura
-    ostream* output; // Podrazumevani izlaz: konzola
+    // Default input: keyboard
+    ostream* output; // Default output: console
 
 public:
     Command(const string& name);
@@ -15,8 +16,8 @@ public:
 
     string getCommandName() const;
 
-    // Omogućavaju cevovod i redirekciju
+    // Enable piping and redirection
     virtual void setOutput();
 
-    virtual void execute() = 0; // Apstraktna metoda
+    virtual void execute() = 0; // Abstract method
 };

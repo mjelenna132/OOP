@@ -28,15 +28,24 @@
     <Filter Include="Source Files\Abstract commands">
       <UniqueIdentifier>{dff557e5-44a2-41e0-aae4-a423bf1d0e8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Commands.cpp\CommandOption">
+      <UniqueIdentifier>{2f971c29-47e0-470b-bd00-8f73040cf705}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Commands.cpp\CommandArgument">
+      <UniqueIdentifier>{2a9c81d2-0ff8-43c6-849e-facbd6f36194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Commands.cpp\Commands">
+      <UniqueIdentifier>{8ca1691a-a2f5-454a-b31c-e44ec8229fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Processing">
+      <UniqueIdentifier>{aaaa338a-ca9a-4790-8400-b216d370dbd9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Parser.h">
       <Filter>Header Files\InputProcessing.h</Filter>
     </ClInclude>
     <ClInclude Include="Reader.h">
-      <Filter>Header Files\InputProcessing.h</Filter>
-    </ClInclude>
-    <ClInclude Include="Simulation.h">
       <Filter>Header Files\InputProcessing.h</Filter>
     </ClInclude>
     <ClInclude Include="Echo.h">
@@ -78,46 +87,31 @@
     <ClInclude Include="Truncate.h">
       <Filter>Header Files\Commands.h</Filter>
     </ClInclude>
-    <ClInclude Include="Rm.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="MyExceptions.h">
+      <Filter>Header Files\InputProcessing.h</Filter>
     </ClInclude>
     <ClInclude Include="Head.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Commands.h</Filter>
     </ClInclude>
     <ClInclude Include="Batch.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Commands.h</Filter>
+    </ClInclude>
+    <ClInclude Include="Rm.h">
+      <Filter>Header Files\Commands.h</Filter>
     </ClInclude>
     <ClInclude Include="Tr.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Commands.h</Filter>
     </ClInclude>
     <ClInclude Include="Pipeline.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\InputProcessing.h</Filter>
     </ClInclude>
-    <ClInclude Include="MyExceptions.h">
+    <ClInclude Include="Simulation.h">
       <Filter>Header Files\InputProcessing.h</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Echo.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="WcChar.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Date.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="WcWords.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Touch.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
     </ClCompile>
     <ClCompile Include="Command.cpp">
       <Filter>Source Files\Abstract commands</Filter>
@@ -128,41 +122,59 @@
     <ClCompile Include="CommandOption.cpp">
       <Filter>Source Files\Abstract commands</Filter>
     </ClCompile>
-    <ClCompile Include="Truncate.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
+    <ClCompile Include="WcChar.cpp">
+      <Filter>Source Files\Commands.cpp\CommandOption</Filter>
     </ClCompile>
-    <ClCompile Include="Prompt.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="Rm.cpp">
-      <Filter>Source Files\Commands.cpp</Filter>
+    <ClCompile Include="WcWords.cpp">
+      <Filter>Source Files\Commands.cpp\CommandOption</Filter>
     </ClCompile>
     <ClCompile Include="Head.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Commands.cpp\CommandOption</Filter>
     </ClCompile>
-    <ClCompile Include="Batch.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Echo.cpp">
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
+    </ClCompile>
+    <ClCompile Include="Prompt.cpp">
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
+    </ClCompile>
+    <ClCompile Include="Rm.cpp">
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
+    </ClCompile>
+    <ClCompile Include="Touch.cpp">
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
+    </ClCompile>
+    <ClCompile Include="Truncate.cpp">
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
     </ClCompile>
     <ClCompile Include="Tr.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
     </ClCompile>
-    <ClCompile Include="Pipeline.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Date.cpp">
+      <Filter>Source Files\Commands.cpp\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Commands.cpp\Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Batch.cpp">
+      <Filter>Source Files\Commands.cpp\CommandArgument</Filter>
     </ClCompile>
     <ClCompile Include="CommandWithArgument.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Simulation.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Abstract commands</Filter>
     </ClCompile>
     <ClCompile Include="CommandFactory.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Processing</Filter>
     </ClCompile>
     <ClCompile Include="Parser.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Processing</Filter>
     </ClCompile>
     <ClCompile Include="Reader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline.cpp">
+      <Filter>Source Files\Processing</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulation.cpp">
+      <Filter>Source Files\Processing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

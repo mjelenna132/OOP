@@ -1,10 +1,12 @@
 #include "Simulation.h"
 
 Simulation::Simulation() {
+    // Create a parser that reads from the console
     myParser = new Parser(new ConsoleReader());
 }
 
 Simulation::~Simulation() {
+    // Clean up parser when simulation is destroyed
     if (myParser) {
         delete myParser;
         myParser = nullptr;
@@ -12,34 +14,41 @@ Simulation::~Simulation() {
 }
 
 bool Simulation::nextCommand() {
+    // Show the current prompt character
     cout << Parser::getLeadingCharacter();
+
     Command* command = nullptr;
 
     try {
+        // Ask parser for the next command
         command = myParser->getNextCommand();
+
         if (command) {
-            command->execute();
-            delete command;
-            return true; // komanda izvršena, ?ekamo slede?u
+            command->execute();  // run the command
+            //cout << endl;
+            delete command;       // free memory
+            return true;          // continue loop
         }
     }
     catch (const std::exception& e) {
-        cerr << "Greška: " << e.what() << endl;
-        // ignoriši komandu, traži novu
+        // Handle known errors
+        cerr << "Error: " << e.what() << endl;
         if (command) {
             delete command;
             command = nullptr;
         }
-        return true;
+        return true; // keep running
     }
     catch (...) {
-        cerr << "Nepoznata greška!" << endl;
+        // Handle any unknown errors
+        cerr << "Unknown error!" << endl;
         if (command) {
             delete command;
             command = nullptr;
         }
-        return true;
+        return true; // keep running
     }
 
-    return false; // ako nije bilo komande (EOF ili exit)
+    // No command available (EOF or exit)
+    return false;
 }

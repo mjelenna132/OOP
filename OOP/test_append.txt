@@ -1,2 +1,1 @@
-Red A
-Red B
+Red ARed B

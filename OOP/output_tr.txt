@@ -1,0 +1,1 @@
+A C++ progrXm is X sequence of text files (typicXlly heXder Xnd source files) thXt contXin declXrXtions. They undergo trXnslXtion to become Xn executXble progrXm, which is executed when the C++ implementXtion cXlls its mXin function.

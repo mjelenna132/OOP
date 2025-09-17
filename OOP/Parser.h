@@ -1,29 +1,35 @@
 #pragma once
 #include "Reader.h"
-#include"CommandFactory.h"
+#include "CommandFactory.h"
 
-//includuj ceo folder
-class Parser{
+// Parser is responsible for reading input lines (from a Reader),
+// cleaning them up (truncate, remove prompt), and converting them
+// into Command objects using the CommandFactory.
+class Parser {
 public:
-	Parser(Reader* reader);
-	~Parser();
+    Parser(Reader* reader);
+    ~Parser();
 
-	Command* getNextCommand();
+    // Get the next command from input (returns nullptr if EOF)
+    Command* getNextCommand();
 
-	static string getLeadingCharacter();
-	static void setLeadingCharacter(const string& character);
+    // Manage the leading character shown as a prompt (e.g., "$")
+    static string getLeadingCharacter();
+    static void setLeadingCharacter(const string& character);
 
 protected:
+    // Parse a single line into a Command object
+    Command* parseCommand(string line);
 
-	Command* parseCommand(string line) ;
-
-	Reader* myReader;
+    // Reader used for input (console or file)
+    Reader* myReader;
 
 private:
-	static string leadingCharacter;
-	static void truncateLine(string& line);
-	static void removeLeadingCharacter(string& line, const string& leadingChar);
-	 
+    // Global leading character string
+    static string leadingCharacter;
 
+    // Helpers for line processing
+    static void truncateLine(string& line);                   // cut line to max length
+    static void removeLeadingCharacter(string& line,
+        const string& leadingChar); // strip prompt char
 };
-

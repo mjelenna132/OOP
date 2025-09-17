@@ -1,24 +1,23 @@
 #include "Rm.h"
 #include "MyExceptions.h"
 
-Rm::Rm(const string& name, const string& argument) : CommandWithArgument(name, argument)
-{}
+Rm::Rm(const string& name, const string& argument)
+    : CommandWithArgument(name, argument) {}
 
 void Rm::execute()
 {
-    // Provera da li fajl postoji
+    // Check if the file exists
     ifstream existingFile(argument);
     if (!existingFile.is_open()) {
-        throw FileException("Fajl '" + argument + "' ne postoji.");
+        throw FileException("File '" + argument + "' does not exist.");
     }
-    existingFile.close(); // Zatvaramo fajl pre brisanja
+    existingFile.close(); // Close before removing
 
-    // Brisanje fajla
-    //funckija prima char tip valjda
+    // Delete the file (remove() expects a const char*)
     if (remove(argument.c_str())) {
-        throw FileException("Nije uspelo brisanje fajla '" + argument + "'.");
+        throw FileException("Failed to delete file '" + argument + "'.");
     }
 
+    // Report success (could also use *output instead of cout)
     cout << "File '" << argument << "' deleted successfully." << endl;
-    // nw treba *output
 }

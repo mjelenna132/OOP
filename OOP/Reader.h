@@ -3,44 +3,44 @@
 #include <string>
 using namespace std;
 
+// Base class for all input sources (console, file, etc.)
 class Reader {
 public:
+    Reader();
+    virtual ~Reader();
 
-	Reader();
-	virtual ~Reader();
+    // Read the next line (pure virtual -> must be implemented by subclasses)
+    virtual string getNextLine() = 0;
 
-	virtual string getNextLine() = 0;
+    // Check if end of input has been reached
+    virtual bool endOfRead() = 0;
 
-	virtual bool endOfRead() = 0;
 protected:
-	bool eofDetected = false;
+    bool eofDetected = false; // Flag to track EOF
 };
 
+// Reads input from a file
 class FileReader : public Reader {
 public:
+    FileReader(string filepath);
+    ~FileReader();
 
-	FileReader(string filepath);
-	~FileReader();
-
-	virtual string getNextLine();
-	virtual bool endOfRead();
+    string getNextLine() override;
+    bool endOfRead() override;
 
 private:
-	ifstream* myInput;
-	
+    ifstream* myInput; // pointer to file input stream
 };
 
+// Reads input from the console (keyboard)
 class ConsoleReader : public Reader {
 public:
-	ConsoleReader();
-	~ConsoleReader();
+    ConsoleReader();
+    ~ConsoleReader();
 
-	virtual string getNextLine();
+    string getNextLine() override;
+    bool endOfRead() override;
 
-	virtual bool endOfRead();
-	void reset();
-//private:
-	 // Da li je detektovan EOF, treba u konstrukoru
-
- 
+    // Reset EOF flag so console can continue reading
+    void reset();
 };

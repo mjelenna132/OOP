@@ -4,9 +4,13 @@
 Date::Date(const std::string& name) : Command(name) {}
 
 void Date::execute() {
+    // Get the current system time
     auto now = chrono::system_clock::now();
     time_t nowTime = chrono::system_clock::to_time_t(now);
 
-    struct tm* localTime = localtime(&nowTime);  
-    *output << put_time(localTime, "%Y-%m-%d ")<< endl;
+    // Convert to local time
+    struct tm* localTime = localtime(&nowTime);
+
+    // Print formatted date (YYYY-MM-DD)
+    *output << put_time(localTime, "%Y-%m-%d ") << endl;
 }

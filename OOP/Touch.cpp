@@ -6,26 +6,28 @@
 using namespace std;
 
 Touch::Touch(const std::string& name, const std::string& arg)
-    :  CommandWithArgument(name, arg) {}
+    : CommandWithArgument(name, arg) {}
 
 void Touch::execute() {
+    // Check if filename was provided
     if (this->noArgument()) {
-        throw ArgumentException("Nije dato ime fajla.");
+        throw ArgumentException("No file name given.");
         return;
     }
 
-  
+    // Check if file already exists
     ifstream existingFile(argument);
     if (existingFile.is_open()) {
         existingFile.close();
-        throw FileException("Fajl '" + argument + "' ve? postoji.");
+        throw FileException("File '" + argument + "' already exists.");
     }
 
-  
+    // Try to create a new file
     ofstream newFile(argument);
     if (!newFile) {
-        throw FileException("Nije mogu?e kreirati fajl '" + argument + "'.");
+        throw FileException("Could not create file '" + argument + "'.");
     }
 
-   *output << "File '" << argument << "' created successfully." << endl;
+    // Report success (respects output redirection)
+    *output << "File '" << argument << "' created successfully." << endl;
 }

@@ -1,3 +1,2 @@
 4
-dodaj jos
-dodaj jos3
+dodaj_jos
